@@ -8,7 +8,7 @@ export default class Cell extends Component {
 
   render() {
     return (
-      <div className="Cell" id={this.props.id} onClick={this.props.onClick}>{this.props.status}</div>
+      <div className="Cell" id={this.props.id} onClick={this.props.onClick}>{this.props.id}</div>
     )
   }
 }

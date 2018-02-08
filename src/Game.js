@@ -17,7 +17,7 @@ const generateGridArray = () => {
 };
 
 export default class Game extends Component {
-  constructor(props)  {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -33,7 +33,7 @@ export default class Game extends Component {
   }
 
   componentWillMount() {
-    this.placeShips(5);
+    this.placeShips();
   }
 
   handleClick(e, index) {
@@ -72,28 +72,137 @@ export default class Game extends Component {
     return Math.floor(Math.random() * Math.floor(100));
   }
 
-  placeShips(num) {
-    const { cells, ships, shipLocations } = this.state;
-    const newCells = cells;
-    let newShipsCount = ships;
-    const newShipLocations = [];
-    let idx = this.generateIndex();
+  placeShips() {
+    const { shipLocations } = this.state;
 
-    while (newShipLocations.length < num) {
-      if (newCells[idx] === EMPTY) {
-        newCells[idx] = SHIP;
-        newShipLocations.push(idx);
-        newShipsCount++;
-      } else {
-        idx = this.generateIndex();
+    const newShipLocations = [
+      this.createShip(5)
+      // this.createShips(4, 2),
+      // this.createShips(3, 2),
+      // this.createShips(2, 2),
+      // this.createShips(1, 1)
+    ];
+
+    console.log(newShipLocations);
+    // const { cells, ships, shipLocations } = this.state;
+    // const newCells = cells;
+    // let newShipsCount = ships;
+    // const newShipLocations = [];
+    // let idx = this.generateIndex();
+    //
+    // while (newShipLocations.length < num) {
+    //   if (newCells[idx] === EMPTY) {
+    //     newCells[idx] = SHIP;
+    //     newShipLocations.push(idx);
+    //     newShipsCount++;
+    //   } else {
+    //     idx = this.generateIndex();
+    //   }
+    // }
+    //
+    // this.setState({
+    //   cells: newCells,
+    //   ships: newShipsCount,
+    //   shipLocations: newShipLocations
+    // })
+  }
+
+  createShip(size) {
+    const newShip = {
+      size,
+      location: []
+    };
+
+    let index = this.generateIndex();
+    let orientation = this.determineOrientation();
+    let isValidShip = this.validateShip(index, size, orientation);
+    // let inBounds = this.inBounds(index, size, orientation);
+    // let isOpen = this.isOpenZone(index, size, orientation);
+    // let hasClearance = this.hasClearance(index);
+
+    do {
+      console.log('doing');
+      index = this.generateIndex();
+      isValidShip = this.validateShip(index, size, orientation);
+    }
+    while (!isValidShip);
+
+    console.log('value: ', this.getShipLocation(index, size, orientation));
+  }
+
+  validateShip(index, size, orientation) {
+    // console.log('inbounds: ', this.inBounds(index, size, orientation));
+    // console.log('isopen: ', this.isOpenZone(index, size, orientation));
+    // console.log('hasclear: ', this.hasClearance(index));
+    return this.inBounds(index, size, orientation)
+      && this.isOpenZone(index, size, orientation)
+      && this.hasClearance(index);
+  }
+
+  determineOrientation() {
+    const num = Math.floor(Math.random() * 10);
+    return num % 2 === 0 ? 'vertical' : 'horizontal';
+  }
+
+  hasClearance(index) {
+    // check if cell and adjacent cells are empty
+    return (this.state.cells[index] !== SHIP)
+      && (this.state.cells[index - 1] !== SHIP)
+      && (this.state.cells[index + 1] !== SHIP)
+      && (this.state.cells[index + 10] !== SHIP)
+      && (this.state.cells[index - 10] !== SHIP);
+  }
+
+  inBounds(index, size, orientation) {
+    let endBoundary, endIndex;
+
+    if (orientation === 'vertical') {
+      endBoundary = (index % 10) + 91;
+      endIndex = index + (10 * (size - 1));
+    } else if (orientation === 'horizontal') {
+      endBoundary = Math.ceil(index / 10) * 10;
+      endIndex = index + (size - 1);
+    }
+
+    return endIndex < endBoundary;
+  }
+
+  isOpenZone(index, size, orientation) {
+    // check if there are enough open spaces for ship
+    let endBoundary;
+
+    if (orientation === 'vertical') {
+      for (let i = index; i < size; i += 10) {
+        if (!this.state.cells[i] || this.state.cells[i] === SHIP) {
+          return false;
+        }
+      }
+    } else if (orientation === 'horizontal') {
+      endBoundary = Math.floor(index / 10) + 10;
+      for (let i = index; i < size; i++) {
+        if (i >= endBoundary || !this.state.cells[i] || this.state.cells[i] === SHIP) {
+          return false;
+        }
       }
     }
 
-    this.setState({
-      cells: newCells,
-      ships: newShipsCount,
-      shipLocations: newShipLocations
-    })
+    return true;
+  }
+
+  getShipLocation(index, size, orientation) {
+    let location = [];
+
+    if (orientation === 'vertical') {
+      for (let i = index; i <= (index + (10 * size)) - 10; i += 10) {
+        location.push(i);
+      }
+    } else if (orientation === 'horizontal') {
+      for (let j = index; j < (index + size); j++) {
+        location.push(j);
+      }
+    }
+
+    return location;
   }
 
   render() {
