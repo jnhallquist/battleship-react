@@ -38,18 +38,20 @@ export default class Game extends Component {
 
   handleClick(e, index) {
     console.log(this.state);
-    const { torpedos, ships, shipLocations, hits, misses } = this.state;
+    const {
+      torpedos, ships, shipLocations, hits, misses
+    } = this.state;
     const newTorpedoCount = torpedos - 1;
+    const newShipLocations = shipLocations;
     let newShipsCount = ships;
-    let newShipLocations = shipLocations;
     let indexOfHitShip;
     let newHitCount = hits;
     let newMissCount = misses;
 
     if (newTorpedoCount >= 0) {
       if (this.state.cells[index] === SHIP) {
-        console.log('HIT');
-        indexOfHitShip = newShipLocations
+        indexOfHitShip = newShipLocations.indexOf(index);
+        newShipLocations.splice(indexOfHitShip, 1);
         newShipsCount--;
         newHitCount++;
       } else{
