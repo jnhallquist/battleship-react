@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import Info from './Info';
 import Cell from './Cell';
 import './Game.css';
 
 const EMPTY = 0;
 const SHIP = 1;
-
 
 const generateGridArray = () => {
   const array = [];
@@ -109,10 +109,12 @@ export default class Game extends Component {
     return (
       <div className="Container">
         <div className="Info">
-          You have {this.state.torpedos} torpedos left
-          There are {this.state.ships} ships remaining on the board
-          Hits: {this.state.hits}
-          Misses: {this.state.misses}
+          <Info
+            torpedos={this.state.torpedos}
+            ships={this.state.ships}
+            hits={this.state.hits}
+            misses={this.state.misses}
+          />
         </div>
         <div className="Grid">
           {renderSquares}
