@@ -1,0 +1,21 @@
+.cell {
+  border: 1px solid #000;
+  height: 50px;
+  width: 50px;
+}
+.white {
+  color: black;
+  background-color: white;
+}
+.blue, .green, .red {
+  color: white;
+}
+.blue {
+  background-color: #4885ed;
+}
+.green {
+  background-color: #3cba54;
+}
+.red {
+  background-color: #db3236;
+}

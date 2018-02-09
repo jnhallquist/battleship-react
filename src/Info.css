@@ -1,0 +1,26 @@
+th, td {
+    text-align: center;
+    padding: 15px;
+    width: 100px;
+}
+
+th {
+  background-color: white;
+}
+
+.Info-container {
+  padding: 10px;
+}
+
+.game-over {
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+.win {
+  color: green;
+}
+
+.lose {
+  color: red;
+}
