@@ -22,8 +22,7 @@ export default class Game extends Component {
 
     this.state = {
       cells: generateGridArray(),
-      // TODO: Change value back to 25
-      torpedos: 5,
+      torpedos: 25,
       ships: 0,
       shipLocations: [],
       status: '',
