@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import './Info.css';
 
+const RESULTS_TEXT = {
+  win: 'You win!',
+  lose: 'You lost'
+};
+
 export default class Info extends Component {
   render() {
     return (
       <div className="Info-container">
-        <div className="GameOver">
-          {this.props.gameResult}
+        <div className={`game-over ${this.props.gameResult}`}>
+          {RESULTS_TEXT[this.props.gameResult]}
         </div>
         <table>
           <thead>

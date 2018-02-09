@@ -18,7 +18,10 @@ export default class Cell extends Component {
   render() {
     let currentColor = this.color(this.props.cells[this.props.id]);
     return (
-      <div className="Cell" style={{backgroundColor: currentColor}} id={this.props.id} onClick={this.props.onClick}>{this.props.id}</div>
+      <div className={`cell ${currentColor}`}
+           id={this.props.id}
+           onClick={this.props.onClick}>
+      </div>
     )
   }
 }

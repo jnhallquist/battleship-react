@@ -165,16 +165,12 @@ export default class Game extends Component {
   }
 
   gameOver(status) {
-    let result;
-
-    if (status === 'win') {
-      result = 'You win!';
-    } else {
+    if (!status) {
       this.revealBoard();
     }
 
     this.setState({
-      gameResult: result || 'You lost'
+      gameResult: status || 'lose'
     });
 
     // TODO: unbind listeners

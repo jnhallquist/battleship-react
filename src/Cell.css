@@ -1,5 +1,21 @@
-.Cell {
+.cell {
   border: 1px solid #000;
   height: 50px;
   width: 50px;
+}
+.white {
+  color: black;
+  background-color: white;
+}
+.blue, .green, .red {
+  color: white;
+}
+.blue {
+  background-color: blue;
+}
+.green {
+  background-color: green;
+}
+.red {
+  background-color: red;
 }
