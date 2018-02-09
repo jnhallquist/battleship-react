@@ -36,45 +36,11 @@ export default class Game extends Component {
     this.placeShips();
   }
 
-  handleClick(e, index) {
-    console.log(this.state);
-    const {
-      torpedos, ships, shipLocations, hits, misses
-    } = this.state;
-    const newTorpedoCount = torpedos - 1;
-    const newShipLocations = shipLocations;
-    let newShipsCount = ships;
-    let indexOfHitShip;
-    let newHitCount = hits;
-    let newMissCount = misses;
-
-    if (newTorpedoCount >= 0) {
-      if (this.state.cells[index] === SHIP) {
-        indexOfHitShip = newShipLocations.indexOf(index);
-        newShipLocations.splice(indexOfHitShip, 1);
-        newShipsCount--;
-        newHitCount++;
-      } else{
-        newMissCount++;
-      }
-
-      this.setState({
-        torpedos: newTorpedoCount,
-        ships: newShipsCount,
-        shipLocations: newShipLocations,
-        hits: newHitCount,
-        misses: newMissCount
-      });
-    }
-  }
-
   generateIndex() {
     return Math.floor(Math.random() * Math.floor(100));
   }
 
   placeShips() {
-    const { shipLocations } = this.state;
-
     const newShipLocations = [
       this.createShip(5),
       this.createShip(4),
@@ -86,7 +52,10 @@ export default class Game extends Component {
       this.createShip(1)
     ];
 
-    this.setState({ ships: newShipLocations.length });
+    this.setState({
+      ships: newShipLocations.length,
+      shipLocations: newShipLocations
+    });
 
     console.log(newShipLocations);
   }
@@ -184,6 +153,48 @@ export default class Game extends Component {
 
     this.updateCells(location);
     return location;
+  }
+
+  handleClick(e, index) {
+    const {
+      torpedos, ships, shipLocations, hits, misses
+    } = this.state;
+    const newTorpedoCount = torpedos - 1;
+    const newShipLocations = shipLocations;
+    let newShipsCount = ships;
+    let indexOfHitShip;
+    let newHitCount = hits;
+    let newMissCount = misses;
+    let idx1;
+    let idx2;
+
+    // Check if user still has torpedos remaining
+    if (newTorpedoCount >= 0) {
+      // Check if cell has a SHIP at index
+      if (this.state.cells[index] === SHIP) {
+        // Increment HIT count only if shipsLocations still contains element
+        for (let i = 0; i < newShipLocations.length; i++) {
+          if (newShipLocations[i].location.includes(index)) {
+            idx1 = i;
+            idx2 = newShipLocations[idx1].location.indexOf(index);
+
+            newShipLocations[idx1].location.splice(idx2, 1);
+            newShipsCount--;
+            newHitCount++;
+          }
+        }
+      } else {
+        newMissCount++;
+      }
+
+      this.setState({
+        torpedos: newTorpedoCount,
+        ships: newShipsCount,
+        shipLocations: newShipLocations,
+        hits: newHitCount,
+        misses: newMissCount
+      });
+    }
   }
 
   updateCells(array) {
