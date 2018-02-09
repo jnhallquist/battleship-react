@@ -3,7 +3,6 @@ import Info from './Info';
 import Cell from './Cell';
 import './Game.css';
 
-const EMPTY = 0;
 const SHIP = 1;
 
 const generateGridArray = () => {
@@ -35,10 +34,6 @@ export default class Game extends Component {
     this.placeShips();
   }
 
-  generateIndex() {
-    return Math.floor(Math.random() * Math.floor(100));
-  }
-
   placeShips() {
     const newShipLocations = [
       this.createShip(5),
@@ -57,6 +52,15 @@ export default class Game extends Component {
     });
 
     console.log(newShipLocations);
+  }
+
+  determineOrientation() {
+    const num = Math.floor(Math.random() * 10);
+    return num % 2 === 0 ? 'vertical' : 'horizontal';
+  }
+
+  generateIndex() {
+    return Math.floor(Math.random() * Math.floor(100));
   }
 
   createShip(size) {
@@ -79,26 +83,6 @@ export default class Game extends Component {
     newShip.location = this.getShipLocation(index, size, orientation);
 
     return newShip;
-  }
-
-  validateShip(index, size, orientation) {
-    return this.inBounds(index, size, orientation)
-      && this.isOpenZone(index, size, orientation)
-      && this.hasClearance(index);
-  }
-
-  determineOrientation() {
-    const num = Math.floor(Math.random() * 10);
-    return num % 2 === 0 ? 'vertical' : 'horizontal';
-  }
-
-  hasClearance(index) {
-    // check if cell and adjacent cells are empty
-    return (this.state.cells[index] !== SHIP)
-      && (this.state.cells[index - 1] !== SHIP)
-      && (this.state.cells[index + 1] !== SHIP)
-      && (this.state.cells[index + 10] !== SHIP)
-      && (this.state.cells[index - 10] !== SHIP);
   }
 
   inBounds(index, size, orientation) {
@@ -137,6 +121,32 @@ export default class Game extends Component {
     return true;
   }
 
+  hasClearance(index) {
+    // check if cell and adjacent cells are empty
+    return (this.state.cells[index] !== SHIP)
+      && (this.state.cells[index - 1] !== SHIP)
+      && (this.state.cells[index + 1] !== SHIP)
+      && (this.state.cells[index + 10] !== SHIP)
+      && (this.state.cells[index - 10] !== SHIP);
+  }
+
+  validateShip(index, size, orientation) {
+    return this.inBounds(index, size, orientation)
+      && this.isOpenZone(index, size, orientation)
+      && this.hasClearance(index);
+  }
+
+  updateCells(array) {
+    const newCellArray = this.state.cells;
+
+    for (let i = 0; i < array.length; i++) {
+      newCellArray[array[i]] = SHIP;
+    }
+
+    this.setState({ cells: newCellArray });
+    console.log(this.state.cells);
+  }
+
   getShipLocation(index, size, orientation) {
     const location = [];
 
@@ -161,7 +171,6 @@ export default class Game extends Component {
     const newTorpedoCount = torpedos - 1;
     const newShipLocations = shipLocations;
     let newShipsCount = ships;
-    let indexOfHitShip;
     let newHitCount = hits;
     let newMissCount = misses;
     let idx1;
@@ -194,17 +203,6 @@ export default class Game extends Component {
         misses: newMissCount
       });
     }
-  }
-
-  updateCells(array) {
-    const newCellArray = this.state.cells;
-
-    for (let i = 0; i < array.length; i++) {
-      newCellArray[array[i]] = SHIP;
-    }
-
-    this.setState({ cells: newCellArray });
-    console.log(this.state.cells);
   }
 
   render() {
