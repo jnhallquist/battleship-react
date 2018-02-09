@@ -54,13 +54,12 @@ export default class Game extends Component {
     console.log(newShipLocations);
   }
 
-  determineOrientation() {
-    const num = Math.floor(Math.random() * 10);
-    return num % 2 === 0 ? 'vertical' : 'horizontal';
+  generateIndex() {
+    return ~~(Math.random() * 100);
   }
 
-  generateIndex() {
-    return Math.floor(Math.random() * Math.floor(100));
+  determineOrientation() {
+    return this.generateIndex() % 2 === 0 ? 'vertical' : 'horizontal';
   }
 
   createShip(size) {
@@ -74,6 +73,7 @@ export default class Game extends Component {
     let index = this.generateIndex();
     let isValidShip = this.validateShip(index, size, orientation);
 
+    // TODO: clean up so not overriding previous sets
     do {
       index = this.generateIndex();
       isValidShip = this.validateShip(index, size, orientation);
@@ -103,6 +103,10 @@ export default class Game extends Component {
     // check if there are enough open spaces for ship
     let endBoundary;
 
+    // TODO: possibly use reduce to check if values sum > 0
+    // TODO: return false if !this.state.cells[index + (size * 10)]
+    //       can replace !this.state.cells[i] as we only need to check
+    //       whether the last element is in bounds or not
     if (orientation === 'vertical') {
       for (let i = index; i < size; i += 10) {
         if (!this.state.cells[i] || this.state.cells[i] === SHIP) {
@@ -123,6 +127,7 @@ export default class Game extends Component {
 
   hasClearance(index) {
     // check if cell and adjacent cells are empty
+    // TODO: can condense with loop
     return (this.state.cells[index] !== SHIP)
       && (this.state.cells[index - 1] !== SHIP)
       && (this.state.cells[index + 1] !== SHIP)
@@ -187,6 +192,7 @@ export default class Game extends Component {
             idx2 = newShipLocations[idx1].location.indexOf(index);
 
             newShipLocations[idx1].location.splice(idx2, 1);
+
             newShipsCount--;
             newHitCount++;
           }
