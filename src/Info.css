@@ -1,5 +1,7 @@
 th, td {
+    text-align: center;
     padding: 15px;
+    width: 100px;
 }
 
 .Info-container {

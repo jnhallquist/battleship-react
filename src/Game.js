@@ -19,10 +19,12 @@ export default class Game extends Component {
       hits: 0,
       misses: 0,
       gameResult: null,
-      showInstructions: false
+      showInstructions: false,
+      revealed: false
     };
 
     this.toggleInstructions = this.toggleInstructions.bind(this);
+    this.revealShips = this.revealShips.bind(this);
   }
 
   componentWillMount() {
@@ -250,6 +252,20 @@ export default class Game extends Component {
     this.setState({ showInstructions: !this.state.showInstructions });
   }
 
+  revealShips() {
+    const revealedShips = this.state.cells;
+
+    revealedShips.forEach((el, index) => {
+      if (el === CONDITIONS.ship) {
+        revealedShips[index] = CONDITIONS.reveal;
+      } else if (el === CONDITIONS.reveal) {
+        revealedShips[index] = CONDITIONS.ship;
+      }
+    });
+
+    this.setState({ cells: revealedShips });
+  }
+
   render() {
     const renderSquares = this.state.cells.map((element, index) =>
       <Cell
@@ -264,11 +280,15 @@ export default class Game extends Component {
       <div className="Container">
         <div className="Toolbar">
           <ButtonToolbar>
-            <Button bsStyle="info" onClick={this.toggleInstructions}>
+            <Button
+              bsStyle="info"
+              onClick={this.toggleInstructions}
+              block
+            >
               Instructions
             </Button>
-            <Button disabled>New Game</Button>
-            <Button disabled>Reveal Ships</Button>
+            <Button disabled block>New Game</Button>
+            <Button onClick={this.revealShips} block>Reveal Ships</Button>
           </ButtonToolbar>
         </div>
         <div className="Instructions">
