@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+
+import {
+  ButtonToolbar,
+  Button,
+  OverlayTrigger,
+  Popover } from 'react-bootstrap';
+
 import Info from './Info';
 import Cell from './Cell';
 import Instructions from './Instructions';
 import CONDITIONS from './util/Conditions';
 import array from './util/generateGridArray';
 import './Game.css';
+
+const popoverLeft = (
+  <Popover id="popover-positioned-left" title="Hey you!">
+    <strong>Cheating is wrong</strong>
+  </Popover>
+);
 
 export default class Game extends Component {
   constructor(props) {
@@ -284,9 +296,11 @@ export default class Game extends Component {
               Instructions
             </Button>
             <Button disabled block>New Game</Button>
-            <Button bsStyle="danger" onClick={this.revealShips} block>
-              Reveal Ships
-            </Button>
+            <OverlayTrigger trigger="click" placement="left" overlay={popoverLeft}>
+              <Button bsStyle="danger" onClick={this.revealShips} block>
+                Reveal Ships
+              </Button>
+            </OverlayTrigger>
           </ButtonToolbar>
         </div>
         <div className="Instructions">
