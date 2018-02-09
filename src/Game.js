@@ -1,32 +1,28 @@
 import React, { Component } from 'react';
+import { ButtonToolbar, Button } from 'react-bootstrap';
 import Info from './Info';
 import Cell from './Cell';
-import CONDITIONS from './Conditions';
+import Instructions from './Instructions';
+import CONDITIONS from './util/Conditions';
+import array from './util/generateGridArray';
 import './Game.css';
-
-const generateGridArray = () => {
-  const array = [];
-
-  while (array.length < 100) {
-    array.push(0);
-  }
-
-  return array;
-};
 
 export default class Game extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      cells: generateGridArray(),
+      cells: array(),
       torpedos: 35,
       ships: 0,
       shipLocations: [],
       hits: 0,
       misses: 0,
-      gameResult: null
+      gameResult: null,
+      showInstructions: false
     };
+
+    this.toggleInstructions = this.toggleInstructions.bind(this);
   }
 
   componentWillMount() {
@@ -97,6 +93,7 @@ export default class Game extends Component {
     return newShip;
   }
 
+  // Check if there is enough room for this ship at this starting index
   inBounds(index, size, orientation) {
     let endBoundary, endIndex;
 
@@ -111,6 +108,7 @@ export default class Game extends Component {
     return endIndex < endBoundary;
   }
 
+  // Check if this ship will not touch any other ship
   hasClearance(index, size, orientation) {
     let noCollisions = true;
 
@@ -173,7 +171,7 @@ export default class Game extends Component {
       gameResult: status || 'lose'
     });
 
-    // TODO: unbind listeners
+    // TODO: Unbind listeners
   }
 
   updateHit(index, cells) {
@@ -248,6 +246,10 @@ export default class Game extends Component {
     });
   }
 
+  toggleInstructions() {
+    this.setState({ showInstructions: !this.state.showInstructions });
+  }
+
   render() {
     const renderSquares = this.state.cells.map((element, index) =>
       <Cell
@@ -260,6 +262,17 @@ export default class Game extends Component {
 
     return (
       <div className="Container">
+        <div className="Toolbar">
+          <ButtonToolbar>
+            <Button bsStyle="info" onClick={this.toggleInstructions}>
+              Instructions
+            </Button>
+            <Button disabled>Reset</Button>
+          </ButtonToolbar>
+        </div>
+        <div className="Instructions">
+          { this.state.showInstructions ? <Instructions /> : null }
+        </div>
         <div className="Info">
           <Info
             torpedos={this.state.torpedos}

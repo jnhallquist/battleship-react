@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CONDITIONS from './Conditions';
+import CONDITIONS from './util/Conditions';
 import './Cell.css';
 
 export default class Cell extends Component {
@@ -16,7 +16,7 @@ export default class Cell extends Component {
   }
 
   render() {
-    let currentColor = this.color(this.props.cells[this.props.id]);
+    const currentColor = this.color(this.props.cells[this.props.id]);
     return (
       <div className={`cell ${currentColor}`}
            id={this.props.id}
