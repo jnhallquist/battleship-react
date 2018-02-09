@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'react-bootstrap';
+import './Info.css';
 
 export default class Info extends Component {
   constructor(props) {
@@ -8,26 +8,26 @@ export default class Info extends Component {
 
   render() {
     return (
-      <Table striped bordered condensed hover>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Torpedos</th>
-            <th>Ships</th>
-            <th>Hits</th>
-            <th>Misses</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td>{this.props.torpedos}</td>
-            <td>{this.props.ships}</td>
-            <td>{this.props.hits}</td>
-            <td>{this.props.misses}</td>
-          </tr>
-        </tbody>
-      </Table>
+      <div className="Info-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Torpedos</th>
+              <th>Ships</th>
+              <th>Hits</th>
+              <th>Misses</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{this.props.torpedos}</td>
+              <td>{this.props.ships}</td>
+              <td>{this.props.hits}</td>
+              <td>{this.props.misses}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     )
   }
 }

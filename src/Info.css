@@ -1,0 +1,11 @@
+th, td {
+    padding: 15px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+.Info-container {
+  padding-bottom: 20px;
+}
