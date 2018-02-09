@@ -267,7 +267,8 @@ export default class Game extends Component {
             <Button bsStyle="info" onClick={this.toggleInstructions}>
               Instructions
             </Button>
-            <Button disabled>Reset</Button>
+            <Button disabled>New Game</Button>
+            <Button disabled>Reveal Ships</Button>
           </ButtonToolbar>
         </div>
         <div className="Instructions">

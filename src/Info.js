@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import './Info.css';
 
 const RESULTS_TEXT = {
@@ -13,7 +14,7 @@ export default class Info extends Component {
         <div className={`game-over ${this.props.gameResult}`}>
           {RESULTS_TEXT[this.props.gameResult]}
         </div>
-        <table>
+        <Table bordered striped>
           <thead>
             <tr>
               <th>Torpedos</th>
@@ -30,7 +31,7 @@ export default class Info extends Component {
               <td>{this.props.misses}</td>
             </tr>
           </tbody>
-        </table>
+        </Table>
       </div>
     )
   }
