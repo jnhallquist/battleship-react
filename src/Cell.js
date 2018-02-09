@@ -3,10 +3,6 @@ import CONDITIONS from './Conditions';
 import './Cell.css';
 
 export default class Cell extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   color(status) {
     if (status === CONDITIONS.hit) {
       return 'green';

@@ -25,7 +25,7 @@ export default class Game extends Component {
       shipLocations: [],
       hits: 0,
       misses: 0,
-      gameResult: ''
+      gameResult: null
     };
   }
 
@@ -180,60 +180,75 @@ export default class Game extends Component {
     // TODO: unbind listeners
   }
 
-  handleClick(e, index) {
-    const {
-      torpedos, ships, shipLocations, hits, misses
-    } = this.state;
-    const newTorpedoCount = torpedos - 1;
-    const newShipLocations = shipLocations;
-    const updatedCells = this.state.cells;
-    let newShipsCount = ships;
-    let newHitCount = hits;
-    let newMissCount = misses;
+  updateHit(index, cells) {
+    const { shipLocations } = this.state;
+    let { ships, hits } = this.state;
+
     let idx1;
     let idx2;
 
-    if (this.state.cells[index] > 1 || this.state.torpedos === 0) {
+    for (let i = 0; i < shipLocations.length; i++) {
+      if (shipLocations[i].location.includes(index)) {
+        idx1 = i;
+        idx2 = shipLocations[idx1].location.indexOf(index);
+
+        shipLocations[idx1].location.splice(idx2, 1);
+        cells[index] = CONDITIONS.hit;
+
+        if (!shipLocations[idx1].location.length) {
+          ships--;
+
+          if (ships === 0) {
+            this.gameOver('win');
+          }
+        }
+
+        hits++;
+      }
+    }
+
+    return {
+      shipLocations,
+      ships,
+      hits
+    };
+  }
+
+  updateMiss(index, cells) {
+    cells[index] = CONDITIONS.miss;
+
+    return {
+      misses: this.state.misses + 1,
+      cells
+    };
+  }
+
+  handleClick(e, index) {
+    const { cells } = this.state;
+    let { torpedos } = this.state;
+    let updatedState = {};
+
+    if (cells[index] > 1 || torpedos === 0 || this.state.gameResult) {
       return;
     }
 
-    if (newTorpedoCount > 0) {
-      if (this.state.cells[index] === CONDITIONS.ship) {
-        for (let i = 0; i < newShipLocations.length; i++) {
-          if (newShipLocations[i].location.includes(index)) {
-            idx1 = i;
-            idx2 = newShipLocations[idx1].location.indexOf(index);
+    torpedos -= 1;
 
-            newShipLocations[idx1].location.splice(idx2, 1);
-            updatedCells[index] = CONDITIONS.hit;
-
-            if (!newShipLocations[idx1].location.length) {
-              newShipsCount--;
-
-              if (newShipsCount === 0) {
-                this.gameOver('win');
-              }
-            }
-
-            newHitCount++;
-          }
-        }
+    if (torpedos > 0) {
+      if (cells[index] === CONDITIONS.ship) {
+        updatedState = this.updateHit(index, cells);
       } else {
-        updatedCells[index] = CONDITIONS.miss;
-        newMissCount++;
+        updatedState = this.updateMiss(index, cells);
       }
     } else {
-      updatedCells[index] = CONDITIONS.miss;
+      cells[index] = CONDITIONS.miss;
       this.gameOver();
     }
 
     this.setState({
-      torpedos: newTorpedoCount,
-      ships: newShipsCount,
-      shipLocations: newShipLocations,
-      hits: newHitCount,
-      misses: newMissCount,
-      cells: updatedCells
+      torpedos,
+      cells,
+      ...updatedState
     });
   }
 
