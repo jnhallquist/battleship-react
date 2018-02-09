@@ -280,15 +280,13 @@ export default class Game extends Component {
       <div className="Container">
         <div className="Toolbar">
           <ButtonToolbar>
-            <Button
-              bsStyle="info"
-              onClick={this.toggleInstructions}
-              block
-            >
+            <Button bsStyle="info" onClick={this.toggleInstructions} block>
               Instructions
             </Button>
             <Button disabled block>New Game</Button>
-            <Button onClick={this.revealShips} block>Reveal Ships</Button>
+            <Button bsStyle="danger" onClick={this.revealShips} block>
+              Reveal Ships
+            </Button>
           </ButtonToolbar>
         </div>
         <div className="Instructions">

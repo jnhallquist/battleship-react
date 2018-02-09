@@ -4,6 +4,10 @@ th, td {
     width: 100px;
 }
 
+th {
+  background-color: white;
+}
+
 .Info-container {
   padding: 10px;
 }
