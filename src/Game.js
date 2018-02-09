@@ -24,7 +24,6 @@ export default class Game extends Component {
       torpedos: 35,
       ships: 0,
       shipLocations: [],
-      status: '',
       hits: 0,
       misses: 0
     };
@@ -32,6 +31,23 @@ export default class Game extends Component {
 
   componentWillMount() {
     this.placeShips();
+  }
+
+  getShipLocation(index, size, orientation) {
+    const location = [];
+
+    if (orientation === 'vertical') {
+      for (let i = index; i <= (index + (10 * size)) - 10; i += 10) {
+        location.push(i);
+      }
+    } else if (orientation === 'horizontal') {
+      for (let j = index; j < (index + size); j++) {
+        location.push(j);
+      }
+    }
+
+    this.updateCells(location);
+    return location;
   }
 
   placeShips() {
@@ -71,12 +87,10 @@ export default class Game extends Component {
     let index = this.generateIndex();
     let isValidShip = this.validateShip(index, size, orientation);
 
-    // TODO: clean up so not overriding previous sets
-    do {
+    while (!isValidShip) {
       index = this.generateIndex();
       isValidShip = this.validateShip(index, size, orientation);
     }
-    while (!isValidShip);
 
     newShip.location = this.getShipLocation(index, size, orientation);
 
@@ -102,29 +116,30 @@ export default class Game extends Component {
 
     if (orientation === 'vertical') {
       for (let i = 0; i < size + 2; i++) {
-        if (this.state.cells[index - 10 + (i * 10)] ||
-            this.state.cells[index - 11 + (i * 10)] ||
-            this.state.cells[index - 9 + (i * 10)]
-            ) {
+        if (this.state.cells[(index - 10) + (i * 10)] ||
+            this.state.cells[(index - 11) + (i * 10)] ||
+            this.state.cells[(index - 9) + (i * 10)]
+        ) {
           noCollisions = false;
         }
       }
     } else if (orientation === 'horizontal') {
       for (let i = 0; i < size + 2; i++) {
-        if (this.state.cells[index - 11 + i] ||
-            this.state.cells[index + 9 + i]  ||
-            this.state.cells[index - 1 + i] ) {
+        if (this.state.cells[(index - 11) + i] ||
+            this.state.cells[(index + 9) + i] ||
+            this.state.cells[(index - 1) + i]
+        ) {
           noCollisions = false;
         }
       }
     }
 
-    return noCollisions
+    return noCollisions;
   }
 
   validateShip(index, size, orientation) {
     return this.inBounds(index, size, orientation)
-        && this.hasClearance(index, size, orientation);
+      && this.hasClearance(index, size, orientation);
   }
 
   updateCells(array) {
@@ -137,23 +152,6 @@ export default class Game extends Component {
     this.setState({ cells: newCellArray });
   }
 
-  getShipLocation(index, size, orientation) {
-    const location = [];
-
-    if (orientation === 'vertical') {
-      for (let i = index; i <= (index + (10 * size)) - 10; i += 10) {
-        location.push(i);
-      }
-    } else if (orientation === 'horizontal') {
-      for (let j = index; j < (index + size); j++) {
-        location.push(j);
-      }
-    }
-
-    this.updateCells(location);
-    return location;
-  }
-
   handleClick(e, index) {
     if (this.state.cells[index] > 1) {
       return;
@@ -163,7 +161,7 @@ export default class Game extends Component {
     } = this.state;
     const newTorpedoCount = torpedos - 1;
     const newShipLocations = shipLocations;
-    let updatedCells = this.state.cells;
+    const updatedCells = this.state.cells;
     let newShipsCount = ships;
     let newHitCount = hits;
     let newMissCount = misses;
@@ -226,6 +224,6 @@ export default class Game extends Component {
           {renderSquares}
         </div>
       </div>
-    )
+    );
   }
 }
