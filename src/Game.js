@@ -31,8 +31,7 @@ export default class Game extends Component {
       hits: 0,
       misses: 0,
       gameResult: null,
-      showInstructions: false,
-      revealed: false
+      showInstructions: false
     };
 
     this.toggleInstructions = this.toggleInstructions.bind(this);
