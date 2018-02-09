@@ -76,35 +76,17 @@ export default class Game extends Component {
     const { shipLocations } = this.state;
 
     const newShipLocations = [
-      this.createShip(5)
-      // this.createShips(4, 2),
-      // this.createShips(3, 2),
-      // this.createShips(2, 2),
-      // this.createShips(1, 1)
+      this.createShip(5),
+      this.createShip(4),
+      this.createShip(4),
+      this.createShip(3),
+      this.createShip(3),
+      this.createShip(2),
+      this.createShip(2),
+      this.createShip(1)
     ];
 
     console.log(newShipLocations);
-    // const { cells, ships, shipLocations } = this.state;
-    // const newCells = cells;
-    // let newShipsCount = ships;
-    // const newShipLocations = [];
-    // let idx = this.generateIndex();
-    //
-    // while (newShipLocations.length < num) {
-    //   if (newCells[idx] === EMPTY) {
-    //     newCells[idx] = SHIP;
-    //     newShipLocations.push(idx);
-    //     newShipsCount++;
-    //   } else {
-    //     idx = this.generateIndex();
-    //   }
-    // }
-    //
-    // this.setState({
-    //   cells: newCells,
-    //   ships: newShipsCount,
-    //   shipLocations: newShipLocations
-    // })
   }
 
   createShip(size) {
@@ -113,27 +95,23 @@ export default class Game extends Component {
       location: []
     };
 
+    const orientation = this.determineOrientation();
+
     let index = this.generateIndex();
-    let orientation = this.determineOrientation();
     let isValidShip = this.validateShip(index, size, orientation);
-    // let inBounds = this.inBounds(index, size, orientation);
-    // let isOpen = this.isOpenZone(index, size, orientation);
-    // let hasClearance = this.hasClearance(index);
 
     do {
-      console.log('doing');
       index = this.generateIndex();
       isValidShip = this.validateShip(index, size, orientation);
     }
     while (!isValidShip);
 
-    console.log('value: ', this.getShipLocation(index, size, orientation));
+    newShip.location = this.getShipLocation(index, size, orientation);
+
+    return newShip;
   }
 
   validateShip(index, size, orientation) {
-    // console.log('inbounds: ', this.inBounds(index, size, orientation));
-    // console.log('isopen: ', this.isOpenZone(index, size, orientation));
-    // console.log('hasclear: ', this.hasClearance(index));
     return this.inBounds(index, size, orientation)
       && this.isOpenZone(index, size, orientation)
       && this.hasClearance(index);
@@ -190,7 +168,7 @@ export default class Game extends Component {
   }
 
   getShipLocation(index, size, orientation) {
-    let location = [];
+    const location = [];
 
     if (orientation === 'vertical') {
       for (let i = index; i <= (index + (10 * size)) - 10; i += 10) {
@@ -202,7 +180,19 @@ export default class Game extends Component {
       }
     }
 
+    this.updateCells(location);
     return location;
+  }
+
+  updateCells(array) {
+    const newCellArray = this.state.cells;
+
+    for (let i = 0; i < array.length; i++) {
+      newCellArray[array[i]] = SHIP;
+    }
+
+    this.setState({ cells: newCellArray });
+    console.log(this.state.cells);
   }
 
   render() {
