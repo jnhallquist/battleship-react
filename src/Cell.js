@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CONDITIONS from './Conditions';
 import './Cell.css';
 
 export default class Cell extends Component {
@@ -6,14 +7,16 @@ export default class Cell extends Component {
     super(props);
   }
 
-  color(state) {
-    if (state == 2) {
+  color(status) {
+    if (status === CONDITIONS.hit) {
       return 'green';
-    } else if (state == 3) {
-      return 'red'
-    } else {
-      return 'white'
+    } else if (status === CONDITIONS.miss) {
+      return 'red';
+    } else if (status === CONDITIONS.reveal) {
+      return 'blue';
     }
+
+    return 'white';
   }
 
   render() {

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Info from './Info';
 import Cell from './Cell';
+import CONDITIONS from './Conditions';
 import './Game.css';
-
-const SHIP = 1;
 
 const generateGridArray = () => {
   const array = [];
@@ -25,7 +24,8 @@ export default class Game extends Component {
       ships: 0,
       shipLocations: [],
       hits: 0,
-      misses: 0
+      misses: 0,
+      gameResult: ''
     };
   }
 
@@ -146,16 +146,41 @@ export default class Game extends Component {
     const newCellArray = this.state.cells;
 
     for (let i = 0; i < array.length; i++) {
-      newCellArray[array[i]] = SHIP;
+      newCellArray[array[i]] = CONDITIONS.ship;
     }
 
     this.setState({ cells: newCellArray });
   }
 
-  handleClick(e, index) {
-    if (this.state.cells[index] > 1) {
-      return;
+  revealBoard() {
+    const { cells } = this.state;
+
+    cells.forEach((el, idx) => {
+      if (el === CONDITIONS.ship) {
+        cells[idx] = CONDITIONS.reveal;
+      }
+    });
+
+    this.setState({ cells });
+  }
+
+  gameOver(status) {
+    let result;
+
+    if (status === 'win') {
+      result = 'You win!';
+    } else {
+      this.revealBoard();
     }
+
+    this.setState({
+      gameResult: result || 'You lost'
+    });
+
+    // TODO: unbind listeners
+  }
+
+  handleClick(e, index) {
     const {
       torpedos, ships, shipLocations, hits, misses
     } = this.state;
@@ -168,40 +193,48 @@ export default class Game extends Component {
     let idx1;
     let idx2;
 
-    // Check if user still has torpedos remaining
-    if (newTorpedoCount >= 0) {
-      // Check if cell has a SHIP at index
-      if (this.state.cells[index] === SHIP) {
-        // Increment HIT count only if shipsLocations still contains element
+    if (this.state.cells[index] > 1 || this.state.torpedos === 0) {
+      return;
+    }
+
+    if (newTorpedoCount > 0) {
+      if (this.state.cells[index] === CONDITIONS.ship) {
         for (let i = 0; i < newShipLocations.length; i++) {
           if (newShipLocations[i].location.includes(index)) {
             idx1 = i;
             idx2 = newShipLocations[idx1].location.indexOf(index);
 
             newShipLocations[idx1].location.splice(idx2, 1);
-            updatedCells[index] = 2;
+            updatedCells[index] = CONDITIONS.hit;
 
             if (!newShipLocations[idx1].location.length) {
               newShipsCount--;
+
+              if (newShipsCount === 0) {
+                this.gameOver('win');
+              }
             }
 
             newHitCount++;
           }
         }
       } else {
-        updatedCells[index] = 3;
+        updatedCells[index] = CONDITIONS.miss;
         newMissCount++;
       }
-
-      this.setState({
-        torpedos: newTorpedoCount,
-        ships: newShipsCount,
-        shipLocations: newShipLocations,
-        hits: newHitCount,
-        misses: newMissCount,
-        cells: updatedCells
-      });
+    } else {
+      updatedCells[index] = CONDITIONS.miss;
+      this.gameOver();
     }
+
+    this.setState({
+      torpedos: newTorpedoCount,
+      ships: newShipsCount,
+      shipLocations: newShipLocations,
+      hits: newHitCount,
+      misses: newMissCount,
+      cells: updatedCells
+    });
   }
 
   render() {
@@ -222,6 +255,8 @@ export default class Game extends Component {
             ships={this.state.ships}
             hits={this.state.hits}
             misses={this.state.misses}
+            gameResult={this.state.gameResult}
+            conditions={this.state.conditions}
           />
         </div>
         <div className="Grid">

@@ -9,6 +9,9 @@ export default class Info extends Component {
   render() {
     return (
       <div className="Info-container">
+        <div className="GameOver">
+          {this.props.gameResult}
+        </div>
         <table>
           <thead>
             <tr>
