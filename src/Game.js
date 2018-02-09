@@ -180,7 +180,11 @@ export default class Game extends Component {
 
             newShipLocations[idx1].location.splice(idx2, 1);
             updatedCells[index] = 2;
-            newShipsCount--;
+
+            if (!newShipLocations[idx1].location.length) {
+              newShipsCount--;
+            }
+
             newHitCount++;
           }
         }
