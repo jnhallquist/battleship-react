@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { Well } from 'react-bootstrap';
 import './Instructions.css';
 
 export default class Instructions extends Component {
   render() {
     return (
-      <div className="Instructions-container">
+      <Well className="Instructions-container">
         <h4 className="Title">How to Play</h4>
         <p>
           You will be playing against a computer. Its name is Tom.
@@ -27,7 +28,7 @@ export default class Instructions extends Component {
         <p>
           The game ends when you run out of torpedos or sink 8 ships.
         </p>
-      </div>
+      </Well>
     )
   }
 }
