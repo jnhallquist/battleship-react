@@ -86,6 +86,8 @@ export default class Game extends Component {
       this.createShip(1)
     ];
 
+    this.setState({ ships: newShipLocations.length });
+
     console.log(newShipLocations);
   }
 
