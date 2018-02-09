@@ -21,7 +21,7 @@ export default class Game extends Component {
 
     this.state = {
       cells: generateGridArray(),
-      torpedos: 25,
+      torpedos: 35,
       ships: 0,
       shipLocations: [],
       status: '',
@@ -50,8 +50,6 @@ export default class Game extends Component {
       ships: newShipLocations.length,
       shipLocations: newShipLocations
     });
-
-    console.log(newShipLocations);
   }
 
   generateIndex() {
@@ -99,46 +97,34 @@ export default class Game extends Component {
     return endIndex < endBoundary;
   }
 
-  isOpenZone(index, size, orientation) {
-    // check if there are enough open spaces for ship
-    let endBoundary;
+  hasClearance(index, size, orientation) {
+    let noCollisions = true;
 
-    // TODO: possibly use reduce to check if values sum > 0
-    // TODO: return false if !this.state.cells[index + (size * 10)]
-    //       can replace !this.state.cells[i] as we only need to check
-    //       whether the last element is in bounds or not
     if (orientation === 'vertical') {
-      for (let i = index; i < size; i += 10) {
-        if (!this.state.cells[i] || this.state.cells[i] === SHIP) {
-          return false;
+      for (let i = 0; i < size + 2; i++) {
+        if (this.state.cells[index - 10 + (i * 10)] ||
+            this.state.cells[index - 11 + (i * 10)] ||
+            this.state.cells[index - 9 + (i * 10)]
+            ) {
+          noCollisions = false;
         }
       }
     } else if (orientation === 'horizontal') {
-      endBoundary = Math.floor(index / 10) + 10;
-      for (let i = index; i < size; i++) {
-        if (i >= endBoundary || !this.state.cells[i] || this.state.cells[i] === SHIP) {
-          return false;
+      for (let i = 0; i < size + 2; i++) {
+        if (this.state.cells[index - 11 + i] ||
+            this.state.cells[index + 9 + i]  ||
+            this.state.cells[index - 1 + i] ) {
+          noCollisions = false;
         }
       }
     }
 
-    return true;
-  }
-
-  hasClearance(index) {
-    // check if cell and adjacent cells are empty
-    // TODO: can condense with loop
-    return (this.state.cells[index] !== SHIP)
-      && (this.state.cells[index - 1] !== SHIP)
-      && (this.state.cells[index + 1] !== SHIP)
-      && (this.state.cells[index + 10] !== SHIP)
-      && (this.state.cells[index - 10] !== SHIP);
+    return noCollisions
   }
 
   validateShip(index, size, orientation) {
     return this.inBounds(index, size, orientation)
-      && this.isOpenZone(index, size, orientation)
-      && this.hasClearance(index);
+        && this.hasClearance(index, size, orientation);
   }
 
   updateCells(array) {
@@ -149,7 +135,6 @@ export default class Game extends Component {
     }
 
     this.setState({ cells: newCellArray });
-    console.log(this.state.cells);
   }
 
   getShipLocation(index, size, orientation) {
@@ -170,11 +155,15 @@ export default class Game extends Component {
   }
 
   handleClick(e, index) {
+    if (this.state.cells[index] > 1) {
+      return;
+    }
     const {
       torpedos, ships, shipLocations, hits, misses
     } = this.state;
     const newTorpedoCount = torpedos - 1;
     const newShipLocations = shipLocations;
+    let updatedCells = this.state.cells;
     let newShipsCount = ships;
     let newHitCount = hits;
     let newMissCount = misses;
@@ -192,12 +181,13 @@ export default class Game extends Component {
             idx2 = newShipLocations[idx1].location.indexOf(index);
 
             newShipLocations[idx1].location.splice(idx2, 1);
-
+            updatedCells[index] = 2;
             newShipsCount--;
             newHitCount++;
           }
         }
       } else {
+        updatedCells[index] = 3;
         newMissCount++;
       }
 
@@ -206,7 +196,8 @@ export default class Game extends Component {
         ships: newShipsCount,
         shipLocations: newShipLocations,
         hits: newHitCount,
-        misses: newMissCount
+        misses: newMissCount,
+        cells: updatedCells
       });
     }
   }
@@ -217,7 +208,7 @@ export default class Game extends Component {
         key={index}
         id={index}
         onClick={e => this.handleClick(e, index)}
-        status={this.state.status}
+        cells={this.state.cells}
       />
     );
 
